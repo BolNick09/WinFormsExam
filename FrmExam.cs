@@ -25,14 +25,17 @@ namespace FrmExam
             taskObjects = new();
             tasks = new();
             decisions = new();
-            users = new();
-
+            users = new();  
         }
 
         private void ShowMessage(Color colour, string message)
         {
             lblMessage.ForeColor = colour;
             lblMessage.Text = message;
+        }
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            AddTaskObject();
         }
 
         private void btnDel_Click(object sender, EventArgs e)
@@ -79,8 +82,9 @@ namespace FrmExam
                 tbEndDate.Text = SelectedDecision?.EndDate.ToString();
 
                 tbPersonName.Text = SelectedUser?.Username;
-                //cbbStatus.Text = SelectedTask.Status;
-                //cbbPosition.Text = SelectedUser?.Position;
+
+                cbbStatus.SelectedIndex = (int)SelectedDecision?.Status;
+                cbbPosition.SelectedIndex = (int)SelectedUser?.UserType;
             }
 
         }
@@ -95,6 +99,14 @@ namespace FrmExam
             clearAll();
             tvMain.Nodes.Clear();
             lblCount.Text = "0";
+
+            cbbStatus.Items.Add("Новое");
+            cbbStatus.Items.Add("В процессе");
+            cbbStatus.Items.Add("Закрыто");
+
+            cbbPosition.Items.Add("Не определен");
+            cbbPosition.Items.Add("Менеджер");
+            cbbPosition.Items.Add("Адмнистратор");
 
             TaskObject.GetInfo(taskObjects);
             WinFormsExam.Task.GetInfo(tasks);
@@ -127,8 +139,7 @@ namespace FrmExam
             tbStartDate.Text = "";
             tbEndDate.Text = "";
 
-            cbbStatus.Items.Clear();
-            cbbPosition.Items.Clear();
+
         }
 
         private void fillTvMain()
@@ -188,9 +199,6 @@ namespace FrmExam
             ShowMessage(Color.Green, $"Объект {taskObject.Id} - {taskObject.Name} добавлен");
         }
 
-        private void btnAdd_Click(object sender, EventArgs e)
-        {
-            AddTaskObject();
-        }
+        
     }
 }
