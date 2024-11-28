@@ -596,6 +596,7 @@
             btnMod.TabIndex = 2;
             btnMod.Text = "Изменить";
             btnMod.UseVisualStyleBackColor = true;
+            btnMod.Click += btnMod_Click;
             // 
             // btnAdd
             // 

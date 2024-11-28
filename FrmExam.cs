@@ -25,7 +25,7 @@ namespace FrmExam
             taskObjects = new();
             tasks = new();
             decisions = new();
-            users = new();  
+            users = new();
         }
 
         private void ShowMessage(Color colour, string message)
@@ -35,12 +35,47 @@ namespace FrmExam
         }
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            AddTaskObject();
+            //Добавление объекта
+            if (tbcInfo.SelectedTab == tbpObject)
+            {
+                if (!CheckTaskObject())
+                {
+                    ShowMessage(Color.Red, "Заполните все поля объекта");
+                    return;
+                }
+                AddTaskObject();
+            }
+            else if (tbcInfo.SelectedTab == tbpTask)
+            {
+                if (tbTaskDescription.Text.IsNullOrEmpty())
+                {
+                    ShowMessage(Color.YellowGreen, "Заполните описание задачи");
+                    return;
+                }
+                AddTask();
+            }
+        }
+        private void btnMod_Click(object sender, EventArgs e)
+        {
+            //Изменение объекта
+            if (tbcInfo.SelectedTab == tbpObject)
+            {
+                if (!CheckTaskObject())
+                {
+                    ShowMessage(Color.YellowGreen, "Заполните все поля объекта");
+                    return;
+                }
+                ModTaskObject();
+            }
         }
 
         private void btnDel_Click(object sender, EventArgs e)
         {
-
+            //Удаление объекта
+            if (tbcInfo.SelectedTab == tbpObject)
+            {
+                DelTaskObject();
+            }
         }
 
         private void tvMain_AfterSelect(object sender, TreeViewEventArgs e)
@@ -178,25 +213,64 @@ namespace FrmExam
 
             return true;
         }
+
         private void AddTaskObject()
         {
-            if (!CheckTaskObject())
-            {
-                ShowMessage(Color.Red, "Заполните все поля объекта");
-                return;
-            }
 
             TaskObject taskObject = new TaskObject(tbObjectName.Text, tbAddress.Text, tbCadastralNumber.Text);
 
             taskObject.Insert();
             taskObjects.Add(taskObject);
 
-            var taskObjectNode = tvMain.Nodes.Add(taskObject.Id.ToString(), taskObject.Name);
-            taskObjectNode.Tag = taskObject.Id;
-            taskObjectNode.ImageIndex = 0;
-            taskObjectNode.Text = taskObject.Name;
+            //var taskObjectNode = tvMain.Nodes.Add(taskObject.Id.ToString(), taskObject.Name);
+            //taskObjectNode.Tag = taskObject.Id;
+            //taskObjectNode.ImageIndex = 0;
+            //taskObjectNode.Text = taskObject.Name;
+            fillTvMain();
 
             ShowMessage(Color.Green, $"Объект {taskObject.Id} - {taskObject.Name} добавлен");
+        }
+
+        private void ModTaskObject()
+        {
+            if (SelectedTaskObject == null)
+                return;
+            SelectedTaskObject.Name = tbObjectName.Text;
+            SelectedTaskObject.Address = tbAddress.Text;
+            SelectedTaskObject.CadastralNumber = tbCadastralNumber.Text;
+
+            SelectedTaskObject.Update();
+            fillTvMain();
+            ShowMessage(Color.Green, $"Объект {SelectedTaskObject.Id} - {SelectedTaskObject.Name} изменен");
+
+
+        }
+
+        private void DelTaskObject()
+        {
+            if (SelectedTaskObject == null)
+                return;
+
+            SelectedTaskObject.Delete();
+            taskObjects.Remove(SelectedTaskObject);
+            fillTvMain();
+        }
+
+        private void AddTask()
+        {
+            if (SelectedTaskObject == null)
+                return;           
+
+            Decision decision = new Decision ("New decision", DateTime.Now, DateTime.Now, Statuses.NEW);
+            decision.Insert();
+            decisions.Add(decision);
+
+            WinFormsExam.Task task = new WinFormsExam.Task(tbTaskDescription.Text, users[0].Id, decision.Id);
+            task.Insert();
+            task.СonnectToObject(SelectedTaskObject.Id);
+
+            tasks.Add(task);
+            fillTvMain();
         }
 
         

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,7 @@ namespace WinFormsExam
             Name = name;
             Address = address;
             CadastralNumber = cadastralNum;
+            TasksID = new List<int>();
 
         }
         public TaskObject(string name, string address, string cadastralNum)
@@ -39,6 +41,7 @@ namespace WinFormsExam
             Name = name;
             Address = address;
             CadastralNumber = cadastralNum;
+            TasksID = new List<int>();
         }
 
         public override string ToString()
@@ -108,14 +111,13 @@ namespace WinFormsExam
         }
 
         public override void Update()
-        {
+        {            
             sqlQuery = @"UPDATE TaskObjects
-                        SET TOName = @parTOName, TOAddress = @parTOAddress, 
-                        TOCadastralNumber = @parTOCadastralNumber
-                        WHERE Id = @parId;
-                        DELETE FROM Objects_Tasks WHERE OT_FK_TaskObjects_Id = @parId;
-                        INSERT INTO Objects_Tasks (OT_FK_TaskObjects_Id, OT_FK_Tasks_Id)
-                        SELECT @parId, TasksId FROM (VALUES (@parTasksId)) AS t(TasksId)";
+                SET TOName = @parTOName, TOAddress = @parTOAddress, 
+                TOCadastralNumber = @parTOCadastralNumber
+                WHERE Id = @parId";
+                   
+                        
 
             sqlConnection.Open();
             try
@@ -128,14 +130,7 @@ namespace WinFormsExam
                 cmd.Parameters.Add(parId);
                 cmd.Parameters.Add(parName);
                 cmd.Parameters.Add(parAddress);
-                cmd.Parameters.Add(parCadastralNum);
-
-                foreach (int taskId in TasksID)
-                {
-                    SqlParameter parTasksId = new SqlParameter("@parTasksId", taskId);
-                    cmd.Parameters.Add(parTasksId);
-                }
-
+                cmd.Parameters.Add(parCadastralNum);               
 
                 cmd.ExecuteNonQuery();
                 sqlConnection.Close();
@@ -151,18 +146,21 @@ namespace WinFormsExam
         {
             try
             {
-                sqlQuery = @"DELETE FROM TaskObjects
-                            WHERE Id = @parId;
-                            DELETE FROM Tasks
-                            WHERE Id IN (SELECT OT_FK_Tasks_Id FROM Objects_Tasks WHERE OT_FK_TaskObjects_Id = @parId);
-                            DELETE FROM Objects_Tasks
-                            WHERE OT_FK_TaskObjects_Id = @parId;";
+                string sqlQuery = @"DELETE FROM TaskObjects
+                            WHERE Id = @parId";
+
+                if (TasksID.Count > 0)
+                {
+                    sqlQuery = @"DELETE FROM Objects_Tasks
+                        WHERE OT_FK_TaskObjects_Id = @parId;
+                        DELETE FROM Tasks
+                        WHERE Id IN (" + string.Join(",", TasksID) + ");"
+                                 + sqlQuery;
+                }
+
                 sqlConnection.Open();
                 SqlCommand cmd = new SqlCommand(sqlQuery, sqlConnection);
-
-                SqlParameter parId = new SqlParameter("@parId", Id);
-                cmd.Parameters.Add(parId);
-
+                cmd.Parameters.AddWithValue("@parId", Id);
                 cmd.ExecuteNonQuery();
                 sqlConnection.Close();
                 Console.WriteLine($"Запись удалена из БД");
@@ -189,11 +187,11 @@ namespace WinFormsExam
             UserId = userId;
             DecisionId = decisionId;
         }
-        public Task(int id, string taskDescription, int userId)
+        public Task (string taskDescription, int userId, int decisionId)
         {
-            Id = id;
             TaskDescription = taskDescription;
             UserId = userId;
+            DecisionId = decisionId;
         }
         public Task(string taskDescription, int userId)
         {
@@ -244,8 +242,8 @@ namespace WinFormsExam
         public override void Insert()
         {
 
-            sqlQuery = $"INSERT INTO Tasks (TDescription, T_FK_User_ID) " +
-                        $"VALUES (@TDescription, @T_FK_User_ID); " +
+            sqlQuery = $"INSERT INTO Tasks (TDescription, T_FK_User_ID, T_FK_Decision_Id) " +
+                        $"VALUES (@TDescription, @T_FK_User_ID, @T_FK_Decision_Id); " +
                         $"SELECT CAST(SCOPE_IDENTITY() AS INT)";
             sqlConnection.Open();
             try
@@ -253,8 +251,10 @@ namespace WinFormsExam
                 SqlCommand cmd = new SqlCommand(sqlQuery, sqlConnection);
                 SqlParameter parDescription = new SqlParameter("@TDescription", TaskDescription);
                 SqlParameter parUserId = new SqlParameter("@T_FK_User_ID", UserId);
+                SqlParameter parDecisionId = new SqlParameter("@T_FK_Decision_Id", DecisionId);
                 cmd.Parameters.Add(parDescription);
                 cmd.Parameters.Add(parUserId);
+                cmd.Parameters.Add(parDecisionId);
                 Id = (int)cmd.ExecuteScalar(); // Get the Id of the inserted record
                 sqlConnection.Close();
                 Console.WriteLine($"Запись добавлена в БД, Id: {Id}");
