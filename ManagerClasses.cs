@@ -192,22 +192,8 @@ namespace WinFormsExam
             TaskDescription = taskDescription;
             UserId = userId;
             DecisionId = decisionId;
-        }
-        public Task(string taskDescription, int userId)
-        {
-            TaskDescription = taskDescription;
-            UserId = userId;
-        }
-        public Task(int id, string taskDescription)
-        {
-            Id = id;
-            TaskDescription = taskDescription;
-        }
-        public Task(string taskDescription)
-        {
-            TaskDescription = taskDescription;
-        }
-
+        }        
+        
         public override string ToString()
         {
             return $"Id: {Id}, Description: {TaskDescription} User id: {UserId}, Decision Id: {DecisionId}";
@@ -321,15 +307,20 @@ namespace WinFormsExam
         {
             try
             {
-                sqlQuery = @"DELETE FROM Tasks
-                            WHERE Id = @parId;
-                            DELETE FROM Objects_Tasks
-                            WHERE OT_FK_Tasks_Id = @parId;";
+                sqlQuery = @"DELETE FROM Objects_Tasks
+                            WHERE OT_FK_Tasks_Id = @parId;
+                            DELETE FROM Decisions
+                            WHERE Decisions.Id = @parDecisionsId;
+                            DELETE FROM Tasks
+                            WHERE Tasks.Id = @parId;
+                            ";
                 sqlConnection.Open();
                 SqlCommand cmd = new SqlCommand(sqlQuery, sqlConnection);
 
                 SqlParameter parId = new SqlParameter("@parId", Id);
+                SqlParameter parDecisionsId = new SqlParameter("@parDecisionsId", DecisionId);
                 cmd.Parameters.Add(parId);
+                cmd.Parameters.Add(parDecisionsId);
 
                 cmd.ExecuteNonQuery();
                 sqlConnection.Close();
@@ -347,10 +338,10 @@ namespace WinFormsExam
     public class Decision : SQLRequests
     {
         public int Id { get; private set; }
-        public string DecisionDescription { get; private set; }
-        public DateTime StartDate { get; private set; }
-        public DateTime EndDate { get; private set; }
-        public Statuses Status { get; private set; }
+        public string DecisionDescription { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public Statuses Status { get; set; }
 
         public Decision(int id, string decisionDescription, DateTime startDate, DateTime endDate, Statuses status)
         {
@@ -461,7 +452,7 @@ namespace WinFormsExam
         public override void Update()
         {
             sqlQuery = "UPDATE Decisions SET DDescription = @parDDescription, DStartDate = @parDStartDate, " +
-                        "DEndDate = @parDEndDate, DStatus = @DStatus WHERE Id = @parId";
+                        "DEndDate = @parDEndDate, DStatus = @parDStatus WHERE Id = @parId";
 
             sqlConnection.Open();
             try

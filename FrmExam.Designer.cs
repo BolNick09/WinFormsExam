@@ -45,16 +45,14 @@
             lblObjectId = new Label();
             label2 = new Label();
             tbpTask = new TabPage();
+            cbbTaskManager = new ComboBox();
+            label10 = new Label();
             tbTaskDescription = new RichTextBox();
             label7 = new Label();
             lblTaskId = new Label();
             label9 = new Label();
             tbpDecision = new TabPage();
-            btnEndDate = new Button();
-            btnStartDate = new Button();
             cbbStatus = new ComboBox();
-            tbStartDate = new TextBox();
-            tbEndDate = new TextBox();
             label14 = new Label();
             label13 = new Label();
             label12 = new Label();
@@ -79,6 +77,8 @@
             btnMod = new Button();
             btnAdd = new Button();
             tvMain = new TreeView();
+            dtpStartDate = new DateTimePicker();
+            dtpEndDate = new DateTimePicker();
             gbParams = new GroupBox();
             gbParams.SuspendLayout();
             tbcInfo.SuspendLayout();
@@ -114,6 +114,7 @@
             tbcInfo.SelectedIndex = 0;
             tbcInfo.Size = new Size(444, 266);
             tbcInfo.TabIndex = 0;
+            tbcInfo.SelectedIndexChanged += tbcInfo_SelectedIndexChanged;
             // 
             // tbpObject
             // 
@@ -236,6 +237,8 @@
             // 
             // tbpTask
             // 
+            tbpTask.Controls.Add(cbbTaskManager);
+            tbpTask.Controls.Add(label10);
             tbpTask.Controls.Add(tbTaskDescription);
             tbpTask.Controls.Add(label7);
             tbpTask.Controls.Add(lblTaskId);
@@ -248,12 +251,35 @@
             tbpTask.Text = "Задача";
             tbpTask.UseVisualStyleBackColor = true;
             // 
+            // cbbTaskManager
+            // 
+            cbbTaskManager.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            cbbTaskManager.DropDownWidth = 500;
+            cbbTaskManager.FormattingEnabled = true;
+            cbbTaskManager.Location = new Point(141, 188);
+            cbbTaskManager.Name = "cbbTaskManager";
+            cbbTaskManager.Size = new Size(275, 28);
+            cbbTaskManager.TabIndex = 15;
+            cbbTaskManager.SelectedIndexChanged += cbbTaskManager_SelectedIndexChanged;
+            // 
+            // label10
+            // 
+            label10.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            label10.AutoSize = true;
+            label10.Font = new Font("Segoe UI", 9F);
+            label10.Location = new Point(8, 191);
+            label10.Margin = new Padding(8, 0, 8, 0);
+            label10.Name = "label10";
+            label10.Size = new Size(118, 20);
+            label10.TabIndex = 14;
+            label10.Text = "Ответственный:";
+            // 
             // tbTaskDescription
             // 
             tbTaskDescription.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tbTaskDescription.Location = new Point(141, 47);
             tbTaskDescription.Name = "tbTaskDescription";
-            tbTaskDescription.Size = new Size(275, 165);
+            tbTaskDescription.Size = new Size(275, 130);
             tbTaskDescription.TabIndex = 13;
             tbTaskDescription.Text = "";
             // 
@@ -264,9 +290,9 @@
             label7.Location = new Point(8, 47);
             label7.Margin = new Padding(8, 0, 8, 0);
             label7.Name = "label7";
-            label7.Size = new Size(122, 20);
+            label7.Size = new Size(131, 20);
             label7.TabIndex = 12;
-            label7.Text = "Описане задачи";
+            label7.Text = "Описание задачи";
             // 
             // lblTaskId
             // 
@@ -292,11 +318,9 @@
             // 
             // tbpDecision
             // 
-            tbpDecision.Controls.Add(btnEndDate);
-            tbpDecision.Controls.Add(btnStartDate);
+            tbpDecision.Controls.Add(dtpEndDate);
+            tbpDecision.Controls.Add(dtpStartDate);
             tbpDecision.Controls.Add(cbbStatus);
-            tbpDecision.Controls.Add(tbStartDate);
-            tbpDecision.Controls.Add(tbEndDate);
             tbpDecision.Controls.Add(label14);
             tbpDecision.Controls.Add(label13);
             tbpDecision.Controls.Add(label12);
@@ -312,28 +336,6 @@
             tbpDecision.Text = "Решение";
             tbpDecision.UseVisualStyleBackColor = true;
             // 
-            // btnEndDate
-            // 
-            btnEndDate.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnEndDate.Font = new Font("Segoe UI", 9F);
-            btnEndDate.Location = new Point(293, 159);
-            btnEndDate.Name = "btnEndDate";
-            btnEndDate.Size = new Size(123, 29);
-            btnEndDate.TabIndex = 21;
-            btnEndDate.Text = "Выбрать дату";
-            btnEndDate.UseVisualStyleBackColor = true;
-            // 
-            // btnStartDate
-            // 
-            btnStartDate.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnStartDate.Font = new Font("Segoe UI", 9F);
-            btnStartDate.Location = new Point(293, 123);
-            btnStartDate.Name = "btnStartDate";
-            btnStartDate.Size = new Size(123, 29);
-            btnStartDate.TabIndex = 20;
-            btnStartDate.Text = "Выбрать дату";
-            btnStartDate.UseVisualStyleBackColor = true;
-            // 
             // cbbStatus
             // 
             cbbStatus.FormattingEnabled = true;
@@ -341,23 +343,6 @@
             cbbStatus.Name = "cbbStatus";
             cbbStatus.Size = new Size(270, 28);
             cbbStatus.TabIndex = 19;
-            // 
-            // tbStartDate
-            // 
-            tbStartDate.Font = new Font("Segoe UI", 9F);
-            tbStartDate.Location = new Point(146, 128);
-            tbStartDate.Name = "tbStartDate";
-            tbStartDate.Size = new Size(141, 27);
-            tbStartDate.TabIndex = 18;
-            tbStartDate.Text = "28.12.2020";
-            // 
-            // tbEndDate
-            // 
-            tbEndDate.Font = new Font("Segoe UI", 9F);
-            tbEndDate.Location = new Point(146, 161);
-            tbEndDate.Name = "tbEndDate";
-            tbEndDate.Size = new Size(141, 27);
-            tbEndDate.TabIndex = 17;
             // 
             // label14
             // 
@@ -554,6 +539,7 @@
             btnRefresh.TabIndex = 7;
             btnRefresh.Text = "Обновить список";
             btnRefresh.UseVisualStyleBackColor = true;
+            btnRefresh.Click += btnRefresh_Click;
             // 
             // lblCount
             // 
@@ -627,6 +613,22 @@
             tvMain.Tag = "TreeView";
             tvMain.AfterSelect += tvMain_AfterSelect;
             // 
+            // dtpStartDate
+            // 
+            dtpStartDate.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            dtpStartDate.Location = new Point(146, 127);
+            dtpStartDate.Name = "dtpStartDate";
+            dtpStartDate.Size = new Size(270, 27);
+            dtpStartDate.TabIndex = 20;
+            // 
+            // dtpEndDate
+            // 
+            dtpEndDate.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            dtpEndDate.Location = new Point(146, 159);
+            dtpEndDate.Name = "dtpEndDate";
+            dtpEndDate.Size = new Size(270, 27);
+            dtpEndDate.TabIndex = 21;
+            // 
             // FrmExam
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -693,8 +695,6 @@
         private Label label8;
         private Label lblDecisionId;
         private Label label11;
-        private TextBox tbStartDate;
-        private TextBox tbEndDate;
         private Label label14;
         private Label label13;
         private Label label12;
@@ -705,9 +705,11 @@
         private Label label17;
         private Label lblPersonId;
         private Label label16;
-        private Button btnEndDate;
-        private Button btnStartDate;
         private ComboBox cbbPosition;
         private TextBox tbPersonName;
+        private ComboBox cbbTaskManager;
+        private Label label10;
+        private DateTimePicker dtpEndDate;
+        private DateTimePicker dtpStartDate;
     }
 }

@@ -4,6 +4,7 @@ using WinFormsExam;
 using System.Linq;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace FrmExam
 {
@@ -12,12 +13,12 @@ namespace FrmExam
         public List<TaskObject> taskObjects { get; set; }
         public List<WinFormsExam.Task> tasks { get; set; }
         public List<Decision> decisions { get; set; }
-        public List<User> users { get; set; }
+        public List<WinFormsExam.User> users { get; set; }
 
         public TaskObject SelectedTaskObject { get; set; }
         public WinFormsExam.Task SelectedTask { get; set; }
         public Decision SelectedDecision { get; set; }
-        public User SelectedUser { get; set; }
+        public WinFormsExam.User SelectedUser { get; set; }
 
         public FrmExam()
         {
@@ -44,6 +45,7 @@ namespace FrmExam
                     return;
                 }
                 AddTaskObject();
+                //ShowMessage(Color.Green, "Объект добавлен");
             }
             else if (tbcInfo.SelectedTab == tbpTask)
             {
@@ -53,7 +55,9 @@ namespace FrmExam
                     return;
                 }
                 AddTask();
+                //ShowMessage(Color.Green, "Задача добавлена");
             }
+            
         }
         private void btnMod_Click(object sender, EventArgs e)
         {
@@ -66,6 +70,21 @@ namespace FrmExam
                     return;
                 }
                 ModTaskObject();
+                //ShowMessage(Color.Green, "Объект изменён");
+            }
+            else if (tbcInfo.SelectedTab == tbpTask)
+            {
+                if (tbTaskDescription.Text.IsNullOrEmpty())
+                {
+                    ShowMessage(Color.YellowGreen, "Заполните описание задачи");
+                    return;
+                }
+                ModTask();
+                //ShowMessage(Color.Green, "Задача изменена");
+            }
+            else if (tbcInfo.SelectedTab == tbpDecision)
+            {
+                ModDecision();
             }
         }
 
@@ -75,6 +94,12 @@ namespace FrmExam
             if (tbcInfo.SelectedTab == tbpObject)
             {
                 DelTaskObject();
+                //ShowMessage(Color.Green, "Объект удалён");
+            }
+            else if (tbcInfo.SelectedTab == tbpTask)
+            {
+                DelTask();
+                //ShowMessage(Color.Green, "Задача удалена");
             }
         }
 
@@ -113,13 +138,15 @@ namespace FrmExam
 
                 tbTaskDescription.Text = SelectedTask.TaskDescription;
                 tbDecisionDescription.Text = SelectedDecision?.DecisionDescription;
-                tbStartDate.Text = SelectedDecision?.StartDate.ToString();
-                tbEndDate.Text = SelectedDecision?.EndDate.ToString();
+                dtpStartDate.Value = SelectedDecision.StartDate;
+                dtpEndDate.Value = SelectedDecision.EndDate;
 
                 tbPersonName.Text = SelectedUser?.Username;
 
                 cbbStatus.SelectedIndex = (int)SelectedDecision?.Status;
                 cbbPosition.SelectedIndex = (int)SelectedUser?.UserType;
+
+                cbbTaskManager.SelectedIndex = cbbTaskManager.Items.IndexOf(SelectedUser);
             }
 
         }
@@ -146,7 +173,7 @@ namespace FrmExam
             TaskObject.GetInfo(taskObjects);
             WinFormsExam.Task.GetInfo(tasks);
             Decision.GetInfo(decisions);
-            User.GetInfo(users);
+            WinFormsExam.User.GetInfo(users);
 
             fillTvMain();
 
@@ -171,8 +198,8 @@ namespace FrmExam
             tbTaskDescription.Text = "";
             tbDecisionDescription.Text = "";
 
-            tbStartDate.Text = "";
-            tbEndDate.Text = "";
+            dtpStartDate.Value = DateTime.Now;
+            dtpEndDate.Value = DateTime.Now;
 
 
         }
@@ -200,6 +227,10 @@ namespace FrmExam
                 }
             }
             lblCount.Text = tvMain.GetNodeCount(false).ToString();
+
+            foreach (WinFormsExam.User user in users)
+                cbbTaskManager.Items.Add(user);
+
         }
 
         private bool CheckTaskObject()
@@ -259,9 +290,9 @@ namespace FrmExam
         private void AddTask()
         {
             if (SelectedTaskObject == null)
-                return;           
+                return;
 
-            Decision decision = new Decision ("New decision", DateTime.Now, DateTime.Now, Statuses.NEW);
+            Decision decision = new Decision("New decision", DateTime.Now, DateTime.Now, Statuses.NEW);
             decision.Insert();
             decisions.Add(decision);
 
@@ -270,9 +301,94 @@ namespace FrmExam
             task.СonnectToObject(SelectedTaskObject.Id);
 
             tasks.Add(task);
+
             fillTvMain();
         }
 
-        
+        private void ModTask()
+        {
+            if (SelectedTaskObject == null)
+                return;
+            if (SelectedTask == null)
+                return;
+
+            SelectedTask.TaskDescription = tbTaskDescription.Text;
+            SelectedTask.UserId = SelectedUser.Id;
+
+            SelectedTask.Update();
+            fillTvMain();
+
+        }
+        private void DelTask()
+        {
+            if (SelectedTaskObject == null)
+                return;
+            if (SelectedTask == null)
+                return;
+
+            SelectedTask.Delete();
+            tasks.Remove(SelectedTask);
+            fillTvMain();
+        }
+
+        private void ModDecision()
+        {
+            if (SelectedDecision == null) 
+                return;
+
+            SelectedDecision.DecisionDescription = tbDecisionDescription.Text;
+            SelectedDecision.StartDate = dtpStartDate.Value;
+            SelectedDecision.EndDate = dtpEndDate.Value;
+            SelectedDecision.Status = (Statuses)cbbStatus.SelectedIndex;
+
+            SelectedDecision.Update();
+            fillTvMain();
+            ShowMessage(Color.Green, "Решение обновлено");
+
+        }
+
+        private void cbbTaskManager_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbbTaskManager.SelectedItem == null)
+                return;
+            SelectedUser = (WinFormsExam.User)cbbTaskManager.SelectedItem;
+
+            tbPersonName.Text = SelectedUser?.Username;
+            cbbStatus.SelectedIndex = (int)SelectedDecision?.Status;
+            cbbPosition.SelectedIndex = (int)SelectedUser?.UserType;
+
+        }
+
+        private void tbcInfo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tbcInfo.SelectedTab == tbpDecision)
+            {
+                btnAdd.Enabled = false;
+                btnDel.Enabled = false;
+            }
+            else
+            {
+                btnAdd.Enabled = true;
+                btnDel.Enabled = true;
+            }
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            taskObjects.Clear();
+            tasks.Clear();
+            decisions.Clear();
+            users.Clear();
+            cbbTaskManager.Items.Clear();
+
+            TaskObject.GetInfo(taskObjects);
+            WinFormsExam.Task.GetInfo(tasks);
+            Decision.GetInfo(decisions);
+            WinFormsExam.User.GetInfo(users);
+
+            fillTvMain();
+
+            ShowMessage(Color.Green, "Данные загружены.");
+        }        
     }
 }
