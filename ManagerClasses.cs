@@ -617,16 +617,16 @@ namespace WinFormsExam
         public override void Update()
         {
             sqlQuery = "UPDATE Users SET UFullName = @parUFullName, UPassWord = @parUPassWord, " +
-                        "UType = @UType WHERE Id = @parId";
+                        "UType = @parUType WHERE Id = @parId";
 
             sqlConnection.Open();
             try
             {
                 SqlCommand cmd = new SqlCommand(sqlQuery, sqlConnection);
                 SqlParameter parId = new SqlParameter("@parId", Id);
-                SqlParameter parUFullName = new SqlParameter("@UFullName", Username);
-                SqlParameter parUPassWord = new SqlParameter("@UPassWord", Password);
-                SqlParameter parUType = new SqlParameter("@UType", UserType);
+                SqlParameter parUFullName = new SqlParameter("@parUFullName", Username);
+                SqlParameter parUPassWord = new SqlParameter("@parUPassWord", Password);
+                SqlParameter parUType = new SqlParameter("@parUType", UserType);
                 cmd.Parameters.Add(parId);
                 cmd.Parameters.Add(parUFullName);
                 cmd.Parameters.Add(parUPassWord);

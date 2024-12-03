@@ -57,6 +57,10 @@ namespace FrmExam
                 AddTask();
                 //ShowMessage(Color.Green, "Задача добавлена");
             }
+            else if (tbcInfo.SelectedTab == tbpUser )
+            {
+                AddUser();
+            }
             
         }
         private void btnMod_Click(object sender, EventArgs e)
@@ -86,6 +90,10 @@ namespace FrmExam
             {
                 ModDecision();
             }
+            else if (tbcInfo.SelectedTab == tbpUser)
+            {
+                ModUser();
+            }
         }
 
         private void btnDel_Click(object sender, EventArgs e)
@@ -100,6 +108,10 @@ namespace FrmExam
             {
                 DelTask();
                 //ShowMessage(Color.Green, "Задача удалена");
+            }
+            else if (tbcInfo.SelectedTab == tbpUser)
+            {
+                DelUser();
             }
         }
 
@@ -197,6 +209,7 @@ namespace FrmExam
 
             tbTaskDescription.Text = "";
             tbDecisionDescription.Text = "";
+            tbPassword.Text = "";
 
             dtpStartDate.Value = DateTime.Now;
             dtpEndDate.Value = DateTime.Now;
@@ -227,7 +240,7 @@ namespace FrmExam
                 }
             }
             lblCount.Text = tvMain.GetNodeCount(false).ToString();
-
+            cbbTaskManager.Items.Clear();
             foreach (WinFormsExam.User user in users)
                 cbbTaskManager.Items.Add(user);
 
@@ -253,10 +266,7 @@ namespace FrmExam
             taskObject.Insert();
             taskObjects.Add(taskObject);
 
-            //var taskObjectNode = tvMain.Nodes.Add(taskObject.Id.ToString(), taskObject.Name);
-            //taskObjectNode.Tag = taskObject.Id;
-            //taskObjectNode.ImageIndex = 0;
-            //taskObjectNode.Text = taskObject.Name;
+
             fillTvMain();
 
             ShowMessage(Color.Green, $"Объект {taskObject.Id} - {taskObject.Name} добавлен");
@@ -354,8 +364,9 @@ namespace FrmExam
             SelectedUser = (WinFormsExam.User)cbbTaskManager.SelectedItem;
 
             tbPersonName.Text = SelectedUser?.Username;
-            cbbStatus.SelectedIndex = (int)SelectedDecision?.Status;
+            cbbStatus.SelectedIndex = (int)SelectedUser?.UserType;
             cbbPosition.SelectedIndex = (int)SelectedUser?.UserType;
+            tbPassword.Text = SelectedUser?.Password;
 
         }
 
@@ -389,6 +400,61 @@ namespace FrmExam
             fillTvMain();
 
             ShowMessage(Color.Green, "Данные загружены.");
-        }        
+        }
+
+        private void AddUser()
+        {
+            if (tbPersonName.Text.IsNullOrEmpty())
+            {
+                ShowMessage(Color.Red, "Введите имя пользователя");
+                return;
+            }
+            if (tbPassword.Text.IsNullOrEmpty())
+            {
+                ShowMessage(Color.Red, "Введите пароль пользователя");
+                return;
+            }
+
+            WinFormsExam.User user = new(tbPersonName.Text, tbPassword.Text, (UserTypes)cbbPosition.SelectedIndex);
+
+            users.Add(user);
+            user.Insert();
+            cbbTaskManager.Items.Add(user);
+            ShowMessage(Color.Green, $"Пользователь {user.Username} добавлен");
+        }
+        private void ModUser()
+        {
+            if (SelectedUser == null)
+                return;
+            if (tbPersonName.Text.IsNullOrEmpty())
+            {
+                ShowMessage(Color.Red, "Введите имя пользователя");
+                return;
+            }
+            if (tbPassword.Text.IsNullOrEmpty())
+            {
+                ShowMessage(Color.Red, "Введите пароль пользователя");
+                return;
+            }
+
+            SelectedUser.Username = tbPersonName.Text;
+            SelectedUser.Password = tbPassword.Text;
+            SelectedUser.UserType = (UserTypes)cbbPosition.SelectedIndex;
+
+            SelectedUser.Update();
+            fillTvMain();
+            ShowMessage(Color.Green, $"Пользователь {SelectedUser.Username} Изменен");
+        }
+        private void DelUser()
+        {
+            if (SelectedUser == null)
+                return;
+
+            SelectedUser.Delete();
+            users.Remove(SelectedUser);
+            fillTvMain();
+            ShowMessage(Color.Green, $"Пользователь {SelectedUser.Username} Удален");
+        }
+
     }
 }

@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             GroupBox gbParams;
-            TreeNode treeNode1 = new TreeNode("Узел2");
-            TreeNode treeNode2 = new TreeNode("Узел1", new TreeNode[] { treeNode1 });
-            TreeNode treeNode3 = new TreeNode("Узел0", new TreeNode[] { treeNode2 });
+            TreeNode treeNode4 = new TreeNode("Узел2");
+            TreeNode treeNode5 = new TreeNode("Узел1", new TreeNode[] { treeNode4 });
+            TreeNode treeNode6 = new TreeNode("Узел0", new TreeNode[] { treeNode5 });
             tbcInfo = new TabControl();
             tbpObject = new TabPage();
             tbObjectName = new TextBox();
@@ -52,6 +52,8 @@
             lblTaskId = new Label();
             label9 = new Label();
             tbpDecision = new TabPage();
+            dtpEndDate = new DateTimePicker();
+            dtpStartDate = new DateTimePicker();
             cbbStatus = new ComboBox();
             label14 = new Label();
             label13 = new Label();
@@ -61,6 +63,8 @@
             lblDecisionId = new Label();
             label11 = new Label();
             tbpUser = new TabPage();
+            tbPassword = new TextBox();
+            label15 = new Label();
             tbPersonName = new TextBox();
             cbbPosition = new ComboBox();
             label18 = new Label();
@@ -77,8 +81,6 @@
             btnMod = new Button();
             btnAdd = new Button();
             tvMain = new TreeView();
-            dtpStartDate = new DateTimePicker();
-            dtpEndDate = new DateTimePicker();
             gbParams = new GroupBox();
             gbParams.SuspendLayout();
             tbcInfo.SuspendLayout();
@@ -92,7 +94,7 @@
             // 
             // gbParams
             // 
-            gbParams.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            gbParams.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             gbParams.Controls.Add(tbcInfo);
             gbParams.Font = new Font("Segoe UI Semibold", 9F);
             gbParams.Location = new Point(309, 12);
@@ -336,8 +338,25 @@
             tbpDecision.Text = "Решение";
             tbpDecision.UseVisualStyleBackColor = true;
             // 
+            // dtpEndDate
+            // 
+            dtpEndDate.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            dtpEndDate.Location = new Point(146, 159);
+            dtpEndDate.Name = "dtpEndDate";
+            dtpEndDate.Size = new Size(270, 27);
+            dtpEndDate.TabIndex = 21;
+            // 
+            // dtpStartDate
+            // 
+            dtpStartDate.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            dtpStartDate.Location = new Point(146, 127);
+            dtpStartDate.Name = "dtpStartDate";
+            dtpStartDate.Size = new Size(270, 27);
+            dtpStartDate.TabIndex = 20;
+            // 
             // cbbStatus
             // 
+            cbbStatus.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             cbbStatus.FormattingEnabled = true;
             cbbStatus.Location = new Point(146, 194);
             cbbStatus.Name = "cbbStatus";
@@ -346,6 +365,7 @@
             // 
             // label14
             // 
+            label14.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             label14.AutoSize = true;
             label14.Font = new Font("Segoe UI", 9F);
             label14.Location = new Point(11, 197);
@@ -357,6 +377,7 @@
             // 
             // label13
             // 
+            label13.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             label13.AutoSize = true;
             label13.Font = new Font("Segoe UI", 9F);
             label13.Location = new Point(11, 164);
@@ -368,6 +389,7 @@
             // 
             // label12
             // 
+            label12.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             label12.AutoSize = true;
             label12.Font = new Font("Segoe UI", 9F);
             label12.Location = new Point(11, 132);
@@ -379,6 +401,7 @@
             // 
             // tbDecisionDescription
             // 
+            tbDecisionDescription.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             tbDecisionDescription.Location = new Point(146, 46);
             tbDecisionDescription.Name = "tbDecisionDescription";
             tbDecisionDescription.Size = new Size(270, 74);
@@ -420,6 +443,8 @@
             // 
             // tbpUser
             // 
+            tbpUser.Controls.Add(tbPassword);
+            tbpUser.Controls.Add(label15);
             tbpUser.Controls.Add(tbPersonName);
             tbpUser.Controls.Add(cbbPosition);
             tbpUser.Controls.Add(label18);
@@ -434,8 +459,28 @@
             tbpUser.Text = "Ответственный";
             tbpUser.UseVisualStyleBackColor = true;
             // 
+            // tbPassword
+            // 
+            tbPassword.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tbPassword.Location = new Point(111, 109);
+            tbPassword.Name = "tbPassword";
+            tbPassword.Size = new Size(306, 27);
+            tbPassword.TabIndex = 20;
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Font = new Font("Segoe UI", 9F);
+            label15.Location = new Point(11, 112);
+            label15.Margin = new Padding(8, 0, 8, 0);
+            label15.Name = "label15";
+            label15.Size = new Size(62, 20);
+            label15.TabIndex = 19;
+            label15.Text = "Пароль";
+            // 
             // tbPersonName
             // 
+            tbPersonName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             tbPersonName.Location = new Point(111, 37);
             tbPersonName.Name = "tbPersonName";
             tbPersonName.Size = new Size(306, 27);
@@ -443,6 +488,7 @@
             // 
             // cbbPosition
             // 
+            cbbPosition.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             cbbPosition.FormattingEnabled = true;
             cbbPosition.Location = new Point(111, 74);
             cbbPosition.Name = "cbbPosition";
@@ -543,7 +589,7 @@
             // 
             // lblCount
             // 
-            lblCount.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            lblCount.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             lblCount.AutoSize = true;
             lblCount.Font = new Font("Segoe UI Semibold", 9F);
             lblCount.Location = new Point(270, 322);
@@ -554,7 +600,7 @@
             // 
             // label1
             // 
-            label1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            label1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Location = new Point(213, 322);
             label1.Name = "label1";
@@ -597,37 +643,21 @@
             // 
             // tvMain
             // 
-            tvMain.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tvMain.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tvMain.Location = new Point(12, 12);
             tvMain.Name = "tvMain";
-            treeNode1.Name = "Узел2";
-            treeNode1.Text = "Узел2";
-            treeNode2.Name = "Узел1";
-            treeNode2.Text = "Узел1";
-            treeNode3.Name = "Узел0";
-            treeNode3.Tag = "t1";
-            treeNode3.Text = "Узел0";
-            tvMain.Nodes.AddRange(new TreeNode[] { treeNode3 });
+            treeNode4.Name = "Узел2";
+            treeNode4.Text = "Узел2";
+            treeNode5.Name = "Узел1";
+            treeNode5.Text = "Узел1";
+            treeNode6.Name = "Узел0";
+            treeNode6.Tag = "t1";
+            treeNode6.Text = "Узел0";
+            tvMain.Nodes.AddRange(new TreeNode[] { treeNode6 });
             tvMain.Size = new Size(291, 298);
             tvMain.TabIndex = 0;
             tvMain.Tag = "TreeView";
             tvMain.AfterSelect += tvMain_AfterSelect;
-            // 
-            // dtpStartDate
-            // 
-            dtpStartDate.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            dtpStartDate.Location = new Point(146, 127);
-            dtpStartDate.Name = "dtpStartDate";
-            dtpStartDate.Size = new Size(270, 27);
-            dtpStartDate.TabIndex = 20;
-            // 
-            // dtpEndDate
-            // 
-            dtpEndDate.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            dtpEndDate.Location = new Point(146, 159);
-            dtpEndDate.Name = "dtpEndDate";
-            dtpEndDate.Size = new Size(270, 27);
-            dtpEndDate.TabIndex = 21;
             // 
             // FrmExam
             // 
@@ -711,5 +741,7 @@
         private Label label10;
         private DateTimePicker dtpEndDate;
         private DateTimePicker dtpStartDate;
+        private TextBox tbPassword;
+        private Label label15;
     }
 }
